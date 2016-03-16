@@ -22,6 +22,17 @@ module Spree
           end
         end
 
+        def create_from_url
+          authorize! :create, Image
+          @image = scope.images.new(image_params)
+          @image.attachment = URI.parse(params[:image][:url])
+          if @image.save
+            respond_with(@image, status: 201, default_template: :show)
+          else
+            invalid_resource!(@image)
+          end
+        end
+
         def update
           @image = scope.images.accessible_by(current_ability, :update).find(params[:id])
           if @image.update_attributes(image_params)

@@ -25,6 +25,10 @@ module Spree
           allow(Spree.user_class).to receive(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
         end
 
+        def stub_external_image!
+          WebMock.stub_request(:any, cat_image_url).to_return(:status => 200, :body => image('thinking-cat.jpg'))
+        end
+
         # This method can be overriden (with a let block) inside a context
         # For instance, if you wanted to have an admin user instead.
         def current_api_user
@@ -37,6 +41,10 @@ module Spree
 
         def upload_image(filename)
           fixture_file_upload(image(filename).path, 'image/jpg')
+        end
+
+        def cat_image_url
+          "https://dummyurl.s3.amazonaws.com/thinking-cat.jpg"
         end
       end
     end

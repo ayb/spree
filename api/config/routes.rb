@@ -4,7 +4,11 @@ Spree::Core::Engine.add_routes do
       resources :promotions, only: [:show]
 
       resources :products do
-        resources :images
+        resources :images do
+          collection do
+            post :create_from_url
+          end
+        end
         resources :variants
         resources :product_properties
       end

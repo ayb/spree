@@ -34,6 +34,20 @@ module Spree
         end.to change(Image, :count).by(1)
       end
 
+      # WebMock won't let us query an external URL
+      it "can create a new image for a variant from a URL" do
+        stub_external_image!
+        expect do
+          api_post :create_from_url,
+                   :image => { :url => cat_image_url,
+                               :viewable_type => 'Spree::Variant',
+                               :viewable_id => product.master.to_param  },
+                   :product_id => product.id
+          expect(response.status).to eq(201)
+          expect(json_response).to have_attributes(attributes)
+        end.to change(Image, :count).by(1)
+      end
+
       it "can't upload a new image for a variant without attachment" do
         api_post :create,
                  image: { viewable_type: 'Spree::Variant',
